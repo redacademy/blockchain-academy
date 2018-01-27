@@ -1,10 +1,8 @@
-pragma solidity ^0.4.12;
+pragma solidity ^0.4.16;
 
 contract Academy {
     
     struct Student {
-        string email;
-        string fullname;
         bool enrolled;
     }
     
@@ -19,9 +17,9 @@ contract Academy {
         name = _name;
     }
 
-    function enroll(string _email, string _fullname) public {
+    function enroll() public {
         require(students[msg.sender].enrolled == false);
-        students[msg.sender] = Student({ email: _email, fullname: _fullname, enrolled: true });
+        students[msg.sender] = Student({ enrolled: true });
 
         Enroll(msg.sender);
     }
