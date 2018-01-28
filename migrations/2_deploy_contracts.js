@@ -1,7 +1,7 @@
 var Academy = artifacts.require("Academy");
-var AcademyFactory = artifacts.require("AcademyFactory");
+var Coin = artifacts.require("REDCoin");
 
 module.exports = function(deployer) {
-  deployer.deploy(AcademyFactory);
   deployer.deploy(Academy);
+  deployer.deploy(Coin);
 };
