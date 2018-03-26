@@ -1,6 +1,6 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.18;
 
-import 'zeppelin-solidity/contracts/ownership/Claimable.sol';
+import "zeppelin-solidity/contracts/ownership/Claimable.sol";
 
 contract Academy is Claimable {
 
@@ -8,57 +8,65 @@ contract Academy is Claimable {
     event Graduate(address student);
     
     struct Student {
+        string name;
+        string email;
         bool enrolled;
+        bool graduated;
     }
     
     bytes32 public name;
     mapping(address => Student) public students;
     mapping(address => Student) public graduates;
-    
-    
+ 
+
     function Academy(bytes32 _name) 
         public 
     {
         name = _name;
     }
 
-    function enroll() 
+    function enroll(address _student, string _name, string _email) 
         public 
         onlyOwner 
     {
-        require(students[msg.sender].enrolled == false);
-        students[msg.sender] = Student({ enrolled: true });
-
-        Enroll(msg.sender);
+        require(!students[_student].enrolled);
+        students[_student] = Student({ 
+            name: _name, 
+            email: _email,
+            enrolled: true, 
+            graduated: false 
+        });
+        emit Enroll(_student);
     }
 
     function graduate(address _student) 
         public 
         onlyOwner 
     {
-        require(students[_student].enrolled == true);
-        graduates[msg.sender] = students[_student];
-        delete students[_student];
-
-        Graduate(msg.sender);
+        require(students[_student].enrolled);
+        
+        students[_student].graduated = true;
+        graduates[_student] = students[_student];
+       
+        emit Graduate(_student);
     }
 
     function didAttend(address _student) 
         public 
         view 
-        returns (Student) 
+        returns (bool)
     {
         require(_student != address(0));
-        return students[_student];
+        return students[_student].enrolled;
     }
 
     function didGraduate(address _student) 
         public 
         view 
-        returns (Student) 
+        returns (bool)
     {
         require(_student != address(0));
-        return graduates[_student];
+        return students[_student].graduated;
     }
 
     function close() 
@@ -70,4 +78,5 @@ contract Academy is Claimable {
     // Fallback function in case someone sends ether to the contract so it doesn't get lost.
     function() payable {}
 }
+
 
